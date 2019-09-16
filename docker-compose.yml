@@ -21,11 +21,21 @@ services:
   #     - SECRET=something-random
   #     - INSECURE_COOKIE=true # Example assumes no https, do not use in production
 
+  auth:
+    image: node
+    volumes:
+      - c:/Users/mark/dev/auth:/src
+    working_dir: /src
+    command: npm start
+    labels:
+      - "traefik.frontend.rule=Host:auth.localhost"
+      - "traefik.port=3000"
+
   whoami:
     image: emilevauge/whoami:latest
     labels:
       - "traefik.frontend.rule=Host:whoami.localhost"
-      - "traefik.frontend.rule=Host:http://auth.localhost:3000"
+      - "traefik.frontend.auth.forward.address=http://auth:3000"
 
 
 
