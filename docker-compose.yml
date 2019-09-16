@@ -1,0 +1,32 @@
+version: '3'
+
+services:
+  traefik:
+    image: traefik:1.7.2-alpine
+    ports:
+      - "80:80"
+    volumes:
+      - c:/Users/mark/dev/auth/traefik.toml:/traefik.toml
+      - /var/run/docker.sock:/var/run/docker.sock
+    labels:
+      - "traefik.frontend.rule=Host:monitor.localhost"
+      - "traefik.port=8080"
+      - "traefik.enable=true"
+
+  # traefik-forward-auth:
+  #   image: thomseddon/traefik-forward-auth:2
+  #   environment:
+  #     - CLIENT_ID=your-client-id
+  #     - CLIENT_SECRET=your-client-secret
+  #     - SECRET=something-random
+  #     - INSECURE_COOKIE=true # Example assumes no https, do not use in production
+
+  whoami:
+    image: emilevauge/whoami:latest
+    labels:
+      - "traefik.frontend.rule=Host:whoami.localhost"
+      - "traefik.frontend.rule=Host:http://auth.localhost:3000"
+
+
+
+ # docker run -w /src -v c:/Users/mark/dev/auth:/src --name auth --network auth_default node npm start
