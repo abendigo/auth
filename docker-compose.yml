@@ -35,7 +35,7 @@ services:
     image: emilevauge/whoami:latest
     labels:
       - "traefik.frontend.rule=Host:whoami.localhost"
-      - "traefik.frontend.auth.forward.address=http://auth:3000"
+      - "traefik.frontend.auth.forward.address=http://auth.localhost/auth"
 
 
 
