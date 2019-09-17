@@ -36,6 +36,7 @@ services:
     labels:
       - "traefik.frontend.rule=Host:whoami.localhost"
       - "traefik.frontend.auth.forward.address=http://auth.localhost/auth"
+      - "traefik.frontend.auth.forward.authResponseHeaders=cookie"
 
 
 
