@@ -6,10 +6,10 @@ services:
     ports:
       - "80:80"
     volumes:
-      - c:/Users/mark/dev/auth/traefik.toml:/traefik.toml
+      - ./traefik.toml:/traefik.toml
       - /var/run/docker.sock:/var/run/docker.sock
     labels:
-      - "traefik.frontend.rule=Host:monitor.localhost"
+      - "traefik.frontend.rule=Host:monitor.localtest.me"
       - "traefik.port=8080"
       - "traefik.enable=true"
 
@@ -24,20 +24,24 @@ services:
   auth:
     image: node
     volumes:
-      - c:/Users/mark/dev/auth:/src
+      - .:/src
     working_dir: /src
     command: npm start
     labels:
-      - "traefik.frontend.rule=Host:auth.localhost"
+      - "traefik.frontend.rule=Host:auth.localtest.me"
       - "traefik.port=3000"
 
-  whoami:
+  closed:
     image: emilevauge/whoami:latest
     labels:
-      - "traefik.frontend.rule=Host:whoami.localhost"
-      - "traefik.frontend.auth.forward.address=http://auth.localhost/auth"
+      - "traefik.frontend.rule=Host:closed.localtest.me"
+      - "traefik.frontend.auth.forward.address=http://auth:3000/auth"
       - "traefik.frontend.auth.forward.authResponseHeaders=cookie"
 
+  open:
+    image: emilevauge/whoami:latest
+    labels:
+      - "traefik.frontend.rule=Host:open.localtest.me"
 
 
  # docker run -w /src -v c:/Users/mark/dev/auth:/src --name auth --network auth_default node npm start

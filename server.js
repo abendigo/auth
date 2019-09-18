@@ -12,18 +12,20 @@ app.use(morgan('combined'));
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookies());
 
-app.post('/login/', (request, response) => {
-  console.log({ request });
-  response.cookie('mycookie', 'value');
+app.post('/login', (request, response) => {
+  console.log({ body: request.body });
+  response.cookie('mycookie', 'value', { domain: 'localtest.me', path: '/', expires: new Date(Date.now() + 900000) });
   response.sendStatus(200);
 });
 app.get('/auth', (request, response) => {
   console.log('cookies', request.cookies);
+  console.log('headers', request.headers);
+
   const { mycookie } = request.cookies;
   if (mycookie) {
     return response.sendStatus(204);
   }
-  return response.redirect('/login');
+  return response.redirect('http://auth.localtest.me/login/');
 });
 
 app.use(express.static(path.join(__dirname, 'public')));
