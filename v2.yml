@@ -1,0 +1,50 @@
+version: '3.7'
+
+services:
+  traefik:
+    image: traefik:2.0.0
+    ports:
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command:
+      - --api.insecure=true
+      - --providers.docker
+      - --providers.docker.exposedbydefault=false
+
+      # --entryPoints.http.address=":80"
+      # --entryPoints.https.address=":443"
+      # --certificatesResolvers.sample.acme.email: mark@oosterveld.org
+      # --certificatesResolvers.sample.acme.storage: oosterveld.org
+      # --certificatesResolvers.sample.acme.httpChallenge.entryPoint: http
+    # labels:
+    #   - "traefik.http.routers.api.rule=Host(`monitor.docker.localhost`)"
+    #   - "traefik.http.routers.api.service=api@internal"
+    #   - "traefik.enable=true"
+
+  # auth:
+  #   image: node
+  #   volumes:
+  #     - .:/src
+  #   working_dir: /src
+  #   command: npm start
+  #   labels:
+  #     - "traefik.http.routers.auth.rule=Host(`auth.docker.localhost`)"
+  #     - "traefik.http.routers.auth.service=XXXX"
+  #     - "traefik.http.middlewares.auth.forwardauth.address=http://auth.docker.localhost/auth"
+  #     - "traefik.http.services.XXXX.loadbalancer.server.port=3000"
+  #     - "traefik.enable=true"
+
+  open:
+    image: emilevauge/whoami:latest
+    labels:
+      - "traefik.http.routers.open.rule=Host(`open.docker.localhost`)"
+      - "traefik.enable=true"
+
+  # closed:
+  #   image: emilevauge/whoami:latest
+  #   labels:
+  #     - "traefik.http.routers.closed.rule=Host(`closed.docker.localhost`)"
+  #     - "traefik.http.routers.closed.middlewares=auth"
+  #     - "traefik.enable=true"

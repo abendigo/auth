@@ -16,8 +16,8 @@ app.post('/login', (request, response) => {
   console.log('headers', request.headers);
   console.log({ body: request.body });
 
-  response.cookie('mycookie', 'value', { domain: 'localtest.me', path: '/', expires: new Date(Date.now() + 900000) });
-  response.redirect('http://closed.localtest.me');
+  response.cookie('mycookie', 'value', { domain: 'docker.localhost', path: '/', expires: new Date(Date.now() + 900000) });
+  response.redirect('http://closed.docker.localhost');
 });
 app.get('/auth', (request, response) => {
   console.log('cookies', request.cookies);
@@ -27,7 +27,7 @@ app.get('/auth', (request, response) => {
   if (mycookie) {
     return response.sendStatus(204);
   }
-  return response.redirect('http://auth.localtest.me/login/');
+  return response.redirect('http://auth.docker.localhost/login/');
 });
 
 app.use(express.static(path.join(__dirname, 'public')));

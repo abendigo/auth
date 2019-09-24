@@ -13,14 +13,6 @@ services:
       - "traefik.port=8080"
       - "traefik.enable=true"
 
-  # traefik-forward-auth:
-  #   image: thomseddon/traefik-forward-auth:2
-  #   environment:
-  #     - CLIENT_ID=your-client-id
-  #     - CLIENT_SECRET=your-client-secret
-  #     - SECRET=something-random
-  #     - INSECURE_COOKIE=true # Example assumes no https, do not use in production
-
   auth:
     image: node
     volumes:
