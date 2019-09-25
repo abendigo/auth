@@ -3,10 +3,9 @@ const cookies = require('cookie-parser');
 const express = require('express');
 const morgan = require('morgan');
 const path = require('path');
-const os = require('os');
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 const sessions = {};
 let session = 0;
@@ -17,11 +16,6 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookies());
 
 app.post('/login', (request, response) => {
-
-  // console.log('hostname', os.hostname());
-  // console.log('url', request.originalUrl)
-  // console.log('cookies', request.cookies);
-  // console.log('headers', request.headers);
   console.log('query', request.query);
   console.log({ body: request.body });
   console.log(sessions[request.query.session]);
@@ -34,8 +28,6 @@ app.post('/login', (request, response) => {
   response.redirect(`http://${domain}`);
 });
 app.get('/auth', (request, response) => {
-  // console.log('hostname', os.hostname());
-  // console.log('url', request.originalUrl)
   console.log('cookies', request.cookies);
   console.log('headers', request.headers);
   console.log('query', request.query);
@@ -47,12 +39,12 @@ app.get('/auth', (request, response) => {
 
   session += 1;
   sessions[session] = {
-    cookiedomain: request.query.cookiedomain,
+    cookiedomain: request.query.domain,
     cookies: {...request.cookies},
     headers: {...request.headers}
   }
 
-  return response.redirect(`http://auth.${request.query.cookiedomain}/login/?session=${session}`);
+  return response.redirect(`http://auth.${request.query.domain}/login/?session=${session}`);
 });
 
 app.use(express.static(path.join(__dirname, 'public')));

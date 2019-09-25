@@ -25,16 +25,16 @@ services:
 
   auth:
     image: node
-    hostname: auth.docker.localhost
     volumes:
       - .:/src
     working_dir: /src
     command: npm start
     labels:
-      - "traefik.http.routers.auth.rule=Host(`auth.docker.localhost`)"
-      - "traefik.http.routers.auth.service=XXXX"
-      - "traefik.http.middlewares.auth.forwardauth.address=http://auth:3000/auth?cookiedomain=docker.localhost"
-      - "traefik.http.services.XXXX.loadbalancer.server.port=3000"
+      - "traefik.http.routers.auth.rule=Host(`auth.docker.localhost`) || Host(`auth.localtest.me`)"
+      - "traefik.http.routers.auth.service=auth"
+      - "traefik.http.services.auth.loadbalancer.server.port=3000"
+      - "traefik.http.middlewares.auth_localhost.forwardauth.address=http://auth:3000/auth?domain=docker.localhost"
+      - "traefik.http.middlewares.auth_localtest.forwardauth.address=http://auth:3000/auth?domain=localtest.me"
       - "traefik.enable=true"
 
   open:
@@ -47,5 +47,18 @@ services:
     image: emilevauge/whoami:latest
     labels:
       - "traefik.http.routers.closed.rule=Host(`closed.docker.localhost`)"
-      - "traefik.http.routers.closed.middlewares=auth"
+      - "traefik.http.routers.closed.middlewares=auth_localhost"
+      - "traefik.enable=true"
+
+  foo:
+    image: emilevauge/whoami:latest
+    labels:
+      - "traefik.http.routers.foo.rule=Host(`foo.localtest.me`)"
+      - "traefik.http.routers.foo.middlewares=auth_localtest"
+      - "traefik.enable=true"
+
+  bar:
+    image: emilevauge/whoami:latest
+    labels:
+      - "traefik.http.routers.bar.rule=Host(`bar.localtest.me`)"
       - "traefik.enable=true"

@@ -1,0 +1,33 @@
+name: Build Docker image
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    name: Build Docker image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/docker/login@master
+        env:
+          DOCKER_USERNAME: abendigo
+          DOCKER_PASSWORD: ${{ secrets.GITHUB_DOCKER_PASSWORD }}
+          DOCKER_REGISTRY_URL: docker.pkg.github.com
+      - uses: actions/docker/cli@master
+        with:
+          args: "build -t auth ."
+      - uses: actions/docker/cli@master
+        with:
+          args: "tag auth docker.pkg.github.com/${GITHUB_REPOSITORY}/auth"
+      - uses: actions/docker/cli@master
+        with:
+          args: "tag auth docker.pkg.github.com/${GITHUB_REPOSITORY}/auth:${GITHUB_SHA}"
+      - uses: actions/docker/cli@master
+        with:
+          args: "push docker.pkg.github.com/${GITHUB_REPOSITORY}/auth"
+      - uses: actions/docker/cli@master
+        with:
+          args: "push docker.pkg.github.com/${GITHUB_REPOSITORY}/auth:${GITHUB_SHA}"
