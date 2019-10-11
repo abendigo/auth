@@ -1,0 +1,28 @@
+http:
+  routers:
+    api-insecure:
+      rule: Host(`monitor.oosterveld.org`)
+      entrypoints:
+        - http
+      middlewares:
+        - redirect
+      service: api@internal
+    api:
+      rule: Host(`monitor.oosterveld.org`)
+      entrypoints:
+        - https
+      middlewares:
+        - myAuth
+      service: api@internal
+      tls:
+        certResolver: sample
+
+  middlewares:
+    redirect:
+      redirectScheme:
+        scheme: https
+    myAuth:
+      basicAuth:
+        users:
+          - 'test:$apr1$H6uskkkW$IgXLP6ewTrSuBkTrqE8wj/'
+
