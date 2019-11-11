@@ -6,6 +6,7 @@ docker run -d \
   -l traefik.http.routers.prometheus-secured.entrypoints=https \
   -l traefik.http.routers.prometheus-secured.tls=true \
   -l traefik.http.routers.prometheus-secured.tls.certResolver=sample \
+  -l traefik.http.routers.prometheus-secured.middlewares=myAuth@file \
   -l traefik.http.services.prometheus.loadbalancer.server.port=9090 \
   -l traefik.enable=true \
   -v $PWD/prometheus.yml:/etc/prometheus/prometheus.yml \
