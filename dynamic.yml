@@ -1,7 +1,7 @@
 http:
   routers:
     api-insecure:
-      rule: Host(`monitor.oosterveld.org`)
+      rule: HostRegexp(`{host:[a-z-.]+}`)
       entrypoints:
         - http
       middlewares:
