@@ -1,33 +1,30 @@
-name: Build Docker image
+name: Build, Tag, Publish, and Deploy Docker image
+env:
+  REGISTRY: docker.pkg.github.com
+  IMAGE: auth
 
 on:
   push:
     branches:
       - master
 
-jobs:
-  build:
-    name: Build Docker image
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v1
-      - uses: actions/docker/login@master
-        env:
-          DOCKER_USERNAME: abendigo
-          DOCKER_PASSWORD: ${{ secrets.GITHUB_DOCKER_PASSWORD }}
-          DOCKER_REGISTRY_URL: docker.pkg.github.com
-      - uses: actions/docker/cli@master
-        with:
-          args: "build -t auth ."
-      - uses: actions/docker/cli@master
-        with:
-          args: "tag auth docker.pkg.github.com/${GITHUB_REPOSITORY}/auth"
-      - uses: actions/docker/cli@master
-        with:
-          args: "tag auth docker.pkg.github.com/${GITHUB_REPOSITORY}/auth:${GITHUB_SHA}"
-      - uses: actions/docker/cli@master
-        with:
-          args: "push docker.pkg.github.com/${GITHUB_REPOSITORY}/auth"
-      - uses: actions/docker/cli@master
-        with:
-          args: "push docker.pkg.github.com/${GITHUB_REPOSITORY}/auth:${GITHUB_SHA}"
+  jobs:
+    build:
+      name: Build, Tag, Publish, and Deploy Docker image
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v1
+        - name: Generate VERSION
+          run: echo "::set-env name=VERSION::$(git describe --tags --always --dirty)"
+        - name: Build IMAGE
+          run: docker build -t ${IMAGE} .
+        - name: Tag IMAGE:VERSION and IMAGE:latest
+          run: |
+            docker tag ${IMAGE} ${REGISTRY}/${{ github.repository }}/${IMAGE}:${VERSION}
+            docker tag ${IMAGE} ${REGISTRY}/${{ github.repository }}/${IMAGE}:latest
+        - name: Login to Registry
+          run: echo ${{ secrets.GITHUB_DOCKER_PASSWORD }} | docker login ${REGISTRY} -u ${{ secrets.GITHUB_DOCKER_USERNAME }} --password-stdin
+        - name: Publish IMAGE:VERSION and IMAGE:latest
+          run: |
+            docker push ${REGISTRY}/${{ github.repository }}/${IMAGE}:${VERSION}
+            docker push ${REGISTRY}/${{ github.repository }}/${IMAGE}:latest
