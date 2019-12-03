@@ -1,4 +1,4 @@
-name: Build, Tag, Publish, and Deploy Docker image
+name: Build, Tag, and Publish Docker image
 env:
   REGISTRY: docker.pkg.github.com
   IMAGE: auth
