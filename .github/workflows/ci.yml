@@ -10,7 +10,7 @@ on:
 
 jobs:
   build:
-    name: Build, Tag, Publish, and Deploy Docker image
+    name: Build, Tag, and Publish Docker image
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
